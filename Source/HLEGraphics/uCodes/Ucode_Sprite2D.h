@@ -67,12 +67,6 @@ inline void DLParser_Sprite2DScaleFlip( MicroCodeCommand command, Sprite2DInfo *
 //*****************************************************************************
 void DLParser_Sprite2DDraw( MicroCodeCommand command, const Sprite2DInfo &info, Sprite2DStruct *sprite )
 {
-
-	// Wipeout.
-	if(sprite->width == 0)
-		return;
-
-	// ToDO : Cache ti state as Sprite2D is mostly used for static BGs
 	TextureInfo ti;
 
 	u32 address = RDPSegAddr(sprite->address);
