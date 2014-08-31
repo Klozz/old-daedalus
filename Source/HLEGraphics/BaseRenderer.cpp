@@ -1935,31 +1935,17 @@ void BaseRenderer::PrepareTexRectUVs(TexCoord * puv0, TexCoord * puv1)
 //*****************************************************************************
 CRefPtr<CNativeTexture> BaseRenderer::LoadTextureDirectly( const TextureInfo & ti )
 {
-	const u32 index = 0;	// TODO: Take advantage of the 7 slots available to bound more textures
+	CRefPtr<CNativeTexture> texture = CTextureCache::Get()->GetOrCreateTexture( ti );
+	DAEDALUS_ASSERT( texture, "texture is NULL" );
 
-	// Avoid texture update, if texture is the same as last time around.
-	if( mBoundTexture[index] == NULL || mBoundTextureInfo[index] != ti )
-	{
-		// Check for 0 width/height textures
-		if( ti.GetWidth() == 0 || ti.GetHeight() == 0 )
-		{
-			DAEDALUS_DL_ERROR( "Loading texture with bad width/height %dx%d in slot %d", ti.GetWidth(), ti.GetHeight(), index );
-		}
-		else
-		{
-			CRefPtr<CNativeTexture> texture = CTextureCache::Get()->GetOrCreateTexture( ti );
-			if( texture != NULL && texture != mBoundTexture[0] )
-			{
-				texture->InstallTexture();
+	texture->InstallTexture();
 
-				mBoundTexture[index] = texture;
-				mBoundTextureInfo[index] = ti;
-				return texture;
-			}
-		}
-	}
-	return mBoundTexture[index];
+	mBoundTexture[0] = texture;
+	mBoundTextureInfo[0] = ti;
+
+	return texture;
 }
+
 //*****************************************************************************
 //
 //*****************************************************************************
@@ -2148,16 +2134,13 @@ inline void BaseRenderer::PokeWorldProject()
 	{
 		mWPmodified = false;
 		mReloadProj = true;
-#ifdef DAEDALUS_PSP
 		if( gGlobalPreferences.ViewportType == VT_FULLSCREEN_HD )
-		{
-			//proper 16:9 scale
-			for ( u32 i = 0; i < 12; i += 4 )
-			{	
-				mWorldProject.mRaw[i] *= HD_SCALE;
-			}
+		{	//proper 16:9 scale
+			mWorldProject.mRaw[0] *= HD_SCALE;
+			mWorldProject.mRaw[4] *= HD_SCALE;
+			mWorldProject.mRaw[8] *= HD_SCALE;
+			mWorldProject.mRaw[12] *= HD_SCALE;
 		}
-#endif
 		sceGuSetMatrix( GU_PROJECTION, reinterpret_cast< const ScePspFMatrix4 * >( &mWorldProject ) );
 		mModelViewStack[mModelViewTop] = gMatrixIdentity;
 	}
