@@ -32,7 +32,6 @@
 typedef void(*MicroCodeInstruction)(MicroCodeCommand);
 #define UcodeFunc(name)	void name(MicroCodeCommand)
 
-extern const u32 ucode_stride[];
 extern const MicroCodeInstruction gNormalInstruction[MAX_UCODE_TABLE][256];
 
 #if defined(DAEDALUS_DEBUG_DISPLAYLIST) || defined(DAEDALUS_ENABLE_PROFILING)
