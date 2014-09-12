@@ -70,9 +70,9 @@ static bool	GBIMicrocode_DetectVersionString( u32 data_base, u32 data_size, char
 
 	for ( u32 i = 0; i+2 < data_size; i++ )
 	{
-		if ( ram[ (data_base + i+0) ^ 3 ] == 'R' &&
-			 ram[ (data_base + i+1) ^ 3 ] == 'S' &&
-			 ram[ (data_base + i+2) ^ 3 ] == 'P' )
+		if ( ram[ (data_base + i+0) ^ U8_TWIDDLE ] == 'R' &&
+			 ram[ (data_base + i+1) ^ U8_TWIDDLE ] == 'S' &&
+			 ram[ (data_base + i+2) ^ U8_TWIDDLE ] == 'P' )
 		{
 			char * p = str;
 			char * e = str+str_len;
@@ -185,6 +185,7 @@ UcodeInfo	GBIMicrocode_DetectVersion( u32 code_base, u32 code_size, u32 data_bas
 
 			gUcodeInfo[i].set = true;
 			gUcodeInfo[i].func = gCustomInstruction;
+			gUcodeInfo[i].name = gCustomInstructionName;
 			gUcodeInfo[i].stride = gMicrocodeData[x].stride;
 			gUcodeInfo[i].address = address;
 
@@ -233,21 +234,23 @@ UcodeInfo	GBIMicrocode_DetectVersion( u32 code_base, u32 code_size, u32 data_bas
 				ucode_version = GBI_1;
 		}
 	}
-/*
+
+#if 0
 	FILE * fh = fopen( "ucodes.txt", "a" );
 	if ( fh )
 	{
 		fprintf( fh,  "{ ucode=%d, 0x%08x, \"%s\", \"%s\"}, \n", ucode_version, code_hash, str, g_ROM.settings.GameName.c_str() );
 		fclose(fh);
 	}
-*/
+#endif
 
 	DBGConsole_Msg(0,"Detected Ucode is: [M Ucode %d, 0x%08x, \"%s\", \"%s\"]", ucode_version, code_hash, str, g_ROM.settings.GameName.c_str() );
 	gUcodeInfo[i].set = true;
 	gUcodeInfo[i].func = gNormalInstruction[ucode_version];
+	gUcodeInfo[i].name = gNormalInstructionName[ucode_version];
 	gUcodeInfo[i].stride = ucode_stride;
 	gUcodeInfo[i].address = address;
-
+	
 	return gUcodeInfo[i];
 }
 

@@ -31,6 +31,9 @@ struct UcodeInfo
 	// Pointer to correct ucode table
 	const MicroCodeInstruction * func;	
 
+	// Pointer to ucode table name
+	const char ** name;
+
 	u32	address;	// ucode_base + data_base... TODO: We should hash this instead ex (code_base*2654435761) >> (32-code_size)?
 	u32	stride;		// Multiplier applied to vertex indices
 	bool set;		// This returns false when current entry is free to use
